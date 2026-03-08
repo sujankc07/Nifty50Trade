@@ -163,11 +163,14 @@ Visit `http://localhost:5173` in your browser.
 
 ## 📸 Screenshots
 
-> Dashboard with live portfolio stats and candlestick chart
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
 
-> Markets page with live Nifty 50 stock prices and trade panel
+### Markets
+![Markets](screenshots/markets.png)
 
-> Mobile responsive design with card layouts
+### Mobile
+![Mobile](screenshots/mobile.png)
 
 ---
 
