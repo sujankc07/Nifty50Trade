@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.production
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.log
+.DS_Store
+.vite/
