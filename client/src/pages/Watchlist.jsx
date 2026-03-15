@@ -67,7 +67,7 @@ const WatchlistPage = () => {
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 15, fontWeight: 700 }}>{formatINR(s.price, 2)}</div>
                   <div style={{ fontSize: 12, color: pnlColor(s.change), marginTop: 2 }}>
-                    {pnlPrefix(s.change)}{s.change?.toFixed(2)} ({pnlPrefix(s.changePercent)}{s.changePercent?.toFixed(2)}%)
+                    {s.change != null ? `${pnlPrefix(s.change)}${s.change.toFixed(2)} (${pnlPrefix(s.changePercent)}${s.changePercent?.toFixed(2)}%)` : '--'}
                   </div>
                 </div>
               </div>

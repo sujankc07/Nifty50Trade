@@ -43,8 +43,8 @@ const StockTable = ({ stocks, selectedSymbol, onSelect }) => {
             {formatINR(s.price, 2)}
           </div>
           <div style={{ textAlign: 'right', alignSelf: 'center' }}>
-            <span style={{ color: s.changePercent >= 0 ? '#10b981' : '#ef4444', fontSize: 13, fontWeight: 600 }}>
-              {s.changePercent >= 0 ? '+' : ''}{s.changePercent?.toFixed(2)}%
+            <span style={{ color: (s.changePercent ?? 0) >= 0 ? '#10b981' : '#ef4444', fontSize: 13, fontWeight: 600 }}>
+              {s.changePercent != null ? `${s.changePercent >= 0 ? '+' : ''}${s.changePercent.toFixed(2)}%` : '--'}
             </span>
           </div>
           {!isMobile && (

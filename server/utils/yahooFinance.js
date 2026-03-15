@@ -6,6 +6,8 @@ const getQuote = async (symbol) => {
     headers: { "User-Agent": "Mozilla/5.0" },
   });
   const meta = res.data.chart.result[0].meta;
+
+  console.log("META:", JSON.stringify(meta, null, 2));
   return {
     regularMarketPrice: +meta.regularMarketPrice.toFixed(2),
     regularMarketChange: +(
