@@ -8,15 +8,15 @@ const getQuote = async (symbol) => {
   const meta = res.data.chart.result[0].meta;
 
   console.log("META:", JSON.stringify(meta, null, 2));
+  const price = +meta.regularMarketPrice.toFixed(2);
+  const prevClose = +meta.previousClose.toFixed(2);
+  const change = +(price - prevClose).toFixed(2);
+  const changePercent = +(((price - prevClose) / prevClose) * 100).toFixed(2);
+
   return {
-    regularMarketPrice: +meta.regularMarketPrice.toFixed(2),
-    regularMarketChange: +(
-      meta.regularMarketPrice - meta.previousClose
-    ).toFixed(2),
-    regularMarketChangePercent: +(
-      ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) *
-      100
-    ).toFixed(2),
+    regularMarketPrice: price,
+    regularMarketChange: change,
+    regularMarketChangePercent: changePercent,
     regularMarketDayHigh: meta.regularMarketDayHigh || 0,
     regularMarketDayLow: meta.regularMarketDayLow || 0,
     regularMarketVolume: meta.regularMarketVolume || 0,

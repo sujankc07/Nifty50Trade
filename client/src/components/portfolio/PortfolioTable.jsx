@@ -29,12 +29,12 @@ const PortfolioTable = ({ holdings, onSell }) => {
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: 12, padding: '16px',
           }}>
-            {/* Row 1: Symbol + Current Value & P&L % */}
+            {/* Row 1: Symbol + P&L */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div style={{ fontWeight: 700, fontSize: 17 }}>{h.symbol.replace('.NS', '')}</div>
               <div style={{ textAlign: 'right' }}>
                 <span style={{ fontWeight: 700, fontSize: 17, color: h.pnl >= 0 ? '#10b981' : '#ef4444' }}>
-                  ₹{(h.currentValue ?? h.currentPrice * h.quantity)?.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                  {h.pnl >= 0 ? '+' : ''}₹{Math.abs(h.pnl)?.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                 </span>
                 <span style={{ fontSize: 13, color: h.pnl >= 0 ? '#10b981' : '#ef4444', marginLeft: 6 }}>
                   ({h.pnl >= 0 ? '+' : ''}{h.pnlPercent?.toFixed(2)}%)
