@@ -1,61 +1,57 @@
 const axios = require('axios');
 
-const API_KEY = process.env.TWELVE_DATA_API_KEY;
-const BASE_URL = 'https://api.twelvedata.com';
-
 const getQuote = async (symbol) => {
-  // Convert NSE symbol format: RELIANCE.NS -> RELIANCE:NSE
-  const sym = symbol.replace('.NS', ':NSE');
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`;
   
-  const res = await axios.get(`${BASE_URL}/quote`, {
-    params: {
-      symbol: sym,
-      apikey: API_KEY,
-    }
+  const res = await axios.get(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept': 'application/json',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
+    timeout: 10000,
   });
 
-  const d = res.data;
-
-  if (d.status === 'error') throw new Error(d.message);
-
-  const price      = +parseFloat(d.close).toFixed(2);
-  const prevClose  = +parseFloat(d.previous_close).toFixed(2);
-  const change     = +(price - prevClose).toFixed(2);
-  const changePct  = +(((price - prevClose) / prevClose) * 100).toFixed(2);
+  const meta = res.data.chart.result[0].meta;
+  const price     = +meta.regularMarketPrice.toFixed(2);
+  const prevClose = +meta.previousClose.toFixed(2);
+  const change    = +(price - prevClose).toFixed(2);
+  const changePct = +(((price - prevClose) / prevClose) * 100).toFixed(2);
 
   return {
     regularMarketPrice:         price,
     regularMarketChange:        change,
     regularMarketChangePercent: changePct,
-    regularMarketDayHigh:       +parseFloat(d.high).toFixed(2),
-    regularMarketDayLow:        +parseFloat(d.low).toFixed(2),
-    regularMarketVolume:        +d.volume || 0,
-    longName:                   d.name || sym,
+    regularMarketDayHigh:       meta.regularMarketDayHigh  || 0,
+    regularMarketDayLow:        meta.regularMarketDayLow   || 0,
+    regularMarketVolume:        meta.regularMarketVolume   || 0,
+    longName:                   meta.longName || meta.shortName || symbol,
   };
 };
 
 const getHistory = async (symbol) => {
-  const sym = symbol.replace('.NS', ':NSE');
-
-  const res = await axios.get(`${BASE_URL}/time_series`, {
-    params: {
-      symbol:     sym,
-      interval:   '1day',
-      outputsize: 30,
-      apikey:     API_KEY,
-    }
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1mo`;
+  
+  const res = await axios.get(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept': 'application/json',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
+    timeout: 10000,
   });
 
-  const d = res.data;
-  if (d.status === 'error') throw new Error(d.message);
+  const result     = res.data.chart.result[0];
+  const timestamps = result.timestamp;
+  const ohlc       = result.indicators.quote[0];
 
-  return d.values.map(v => ({
-    date:  v.datetime,
-    open:  +parseFloat(v.open).toFixed(2),
-    high:  +parseFloat(v.high).toFixed(2),
-    low:   +parseFloat(v.low).toFixed(2),
-    close: +parseFloat(v.close).toFixed(2),
-  })).reverse(); // oldest to newest for chart
+  return timestamps.map((t, i) => ({
+    date:  new Date(t * 1000).toISOString().split('T')[0],
+    open:  +(ohlc.open[i]  || 0).toFixed(2),
+    high:  +(ohlc.high[i]  || 0).toFixed(2),
+    low:   +(ohlc.low[i]   || 0).toFixed(2),
+    close: +(ohlc.close[i] || 0).toFixed(2),
+  })).filter(d => d.close > 0);
 };
 
 module.exports = { getQuote, getHistory };
