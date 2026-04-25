@@ -12,9 +12,16 @@ const getQuote = async (symbol) => {
     timeout: 10000,
   });
 
-  const meta = res.data.chart.result[0].meta;
+  console.log('RAW RESPONSE:', JSON.stringify(res.data).substring(0, 500));
+
+  const result = res.data.chart?.result;
+  if (!result || result.length === 0) throw new Error(`No data for ${symbol}`);
+  
+  const meta = result[0].meta;
+  if (!meta?.regularMarketPrice) throw new Error(`No price for ${symbol}`);
+
   const price     = +meta.regularMarketPrice.toFixed(2);
-  const prevClose = +meta.previousClose.toFixed(2);
+  const prevClose = +(meta.previousClose || meta.chartPreviousClose).toFixed(2);
   const change    = +(price - prevClose).toFixed(2);
   const changePct = +(((price - prevClose) / prevClose) * 100).toFixed(2);
 
